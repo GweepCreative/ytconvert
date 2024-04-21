@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { LightBlur } from "./page";
+import { Toaster } from "@/components/ui/sonner";
+import Link from "next/link";
+const inter = Space_Grotesk({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +18,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} bg-darkest `}>
+        <main className=" flex min-h-screen">
+          <LightBlur />
+          <div className="m-4 flex  flex-col items-center justify-between w-full">
+            <header className="z-50 flex items-center justify-center p-4 w-full">
+              <Link href="/">
+                <h1 className="text-4xl font-extrabold bg-gradient-to-r from-red-500 via-red-700 to-red-900 inline-block text-transparent bg-clip-text text-center">
+                  Youtube Video Converter
+                </h1>
+              </Link>
+            </header>
+            {children}
+
+            <footer>
+              <p className="text-zinc-700 text-center">
+                &copy; {new Date().getFullYear()} Youtube Video Converter
+              </p>
+            </footer>
+          </div>
+        </main>
+        <Toaster />
+      </body>
     </html>
   );
 }
