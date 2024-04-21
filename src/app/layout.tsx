@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { LightBlur } from "./page";
+import { LightBlur } from "@/components/ui/LightBlur";
 import { Toaster } from "@/components/ui/sonner";
 import Link from "next/link";
 const inter = Space_Grotesk({ subsets: ["latin"] });
