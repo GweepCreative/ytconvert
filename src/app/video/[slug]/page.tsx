@@ -103,24 +103,60 @@ export default function VideoDownload({
             </TabsList>
             <TabsContent value="video">
               <div className="flex w-full">
-                <div className="flex w-full justify-around items-center bg-zinc-800 py-2 rounded-lg">
+                <div className="flex w-full justify-around items-center bg-zinc-800 p-2 rounded-lg">
                   <p>1080p</p>
-                  <Button>Downlaod</Button>
+                  <Button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-4 h-4 sm:hidden"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                      />
+                    </svg>
+                    <p className="hidden sm:flex">Downlaod</p>
+                  </Button>
                 </div>
               </div>
             </TabsContent>
             <TabsContent value="audio">
               <div className="flex flex-col gap-y-2 w-full">
-                {video.onlyAudio.map((audio) => (
-                  <div className="flex w-full justify-around items-center bg-zinc-800 py-2 rounded-lg">
+                {video.onlyAudio.map((audio, index) => (
+                  <div
+                    key={index}
+                    className="flex w-full justify-between items-center bg-zinc-800 p-2 rounded-lg"
+                  >
                     <p className="flex gap-x-2 justify-center items-center">
                       {audio.container}{" "}
                       <Badge>{audio.mimeType.split(";")[0]}</Badge>
                     </p>
 
-                   
-                      <Button type="submit" onClick={()=>window.open(audio.url)}>Downlaod</Button>
-                 
+                    <Button
+                      type="submit"
+                      onClick={() => window.open(audio.url)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4 sm:hidden"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                        />
+                      </svg>
+                      <p className="hidden sm:flex">Downlaod</p>
+                    </Button>
                   </div>
                 ))}
               </div>
