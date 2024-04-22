@@ -133,7 +133,7 @@ export default function VideoDownload({
                     className="flex w-full justify-between items-center bg-zinc-800 p-2 rounded-lg"
                   >
                     <p className="flex gap-x-2 justify-center items-center">
-                      {audio.container}{" "}
+                      {audio.container}
                       <Badge>{audio.mimeType.split(";")[0]}</Badge>
                     </p>
 
