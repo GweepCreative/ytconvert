@@ -111,8 +111,8 @@ export default function VideoDownload({
             </TabsContent>
             <TabsContent value="audio">
               <div className="flex flex-col gap-y-2 w-full">
-                {video.onlyAudio.map((audio) => (
-                  <div className="flex w-full justify-around items-center bg-zinc-800 py-2 rounded-lg">
+                {video.onlyAudio.map((audio,index) => (
+                  <div key={index} className="flex w-full justify-around items-center bg-zinc-800 py-2 rounded-lg">
                     <p className="flex gap-x-2 justify-center items-center">
                       {audio.container}{" "}
                       <Badge>{audio.mimeType.split(";")[0]}</Badge>
