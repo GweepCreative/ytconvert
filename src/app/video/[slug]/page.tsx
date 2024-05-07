@@ -47,25 +47,73 @@ export default function VideoDownload({
   }
 
   async function DownloadAudio(dataurl: string) {
+    // var Buffer = require("buffer").Buffer;
     setLoading(true);
+    const buffer: any = [];
     try {
-      const response = await axios.post("/api/ConvertMp3", {
-        url: dataurl,
-      }); // WebM dosyasının URL'si
+      fetch("/api/ConvertMp3", {
+        method: "POST",
+        body: JSON.stringify({ dataurl }),
+        headers: {
+          "Content-Type": "application/json",
+          Connection: "keep-alive",
+        },
+      })
+        .then((response) => response.body)
+        .then((res) => {
+          const reader = res?.getReader();
+          const stream = new ReadableStream({
+            start(controller) {
+              function push() {
+                reader?.read().then(({ done, value }) => {
+                  if (done) {
+                    controller.close();
+                    setProgress(100);
 
-      console.log(response.data);
-      // const blob = new Blob([await response.data], { type: "audio/mpeg" });
+                    // let data = Buffer.concat(buffer);
+                    // let blob = new Blob([data], { type: "audio/mp3" });
+                    // let url = URL.createObjectURL(blob);
+                    // const a = document.createElement("a");
+                    // a.href = url;
+                    // a.download = "audio.mp3";
+                    // a.click();
+                    // window.URL.revokeObjectURL(url);
 
-      // // Dosyayı indirmek için bir link oluştur
-      // const url = window.URL.createObjectURL(blob);
-      // const a = document.createElement("a");
-      // a.href = url;
-      // a.download = `GRKNCONVERT - ${video?.info.title}.mp3`;
-      // document.body.appendChild(a);
-      // a.click();
-      // // İndirme işlemi tamamlandığında link'i temizle
-      // window.URL.revokeObjectURL(url);
-      // document.body.removeChild(a);
+                    return;
+                  }
+                  controller.enqueue(value);
+                  push();
+                });
+              }
+              push();
+            },
+          });
+          const readableStream = stream
+            .pipeThrough(new TextDecoderStream())
+            .pipeTo(
+              new WritableStream({
+                write(chunk) {
+                  if (!chunk || !Buffer.isBuffer(Buffer.from(chunk)))
+                    return console.log("Chunk is empty");
+
+                  buffer.push(Buffer.from(chunk,  "base64"));
+                },
+                close() {
+                  // console.log("Stream closed");
+                  // console.log("Buffers: ", buffer);
+                  const data = Buffer.concat(buffer);
+                  const blob = new Blob([data], { type: "audio/mp3" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = video?.info.title+".mp3";
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  return;
+                },
+              })
+            );
+        });
     } catch (error) {
       console.error("Dosya indirilirken bir hata oluştu: ", error);
     } finally {
