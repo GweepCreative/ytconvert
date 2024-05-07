@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <div className="z-50 flex flex-col gap-y-10 ">
       <div className="flex flex-col justify-center items-center w-full">
-        <h1 className="text-4xl font-bold text-center text-white">
+        <h1 className="text-5xl font-bold text-center text-white">
           Youtube Video Converter
         </h1>
         <p className="text-lg text-center mt-1 text-white">

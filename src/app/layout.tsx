@@ -22,9 +22,9 @@ export default function RootLayout({
         <main className=" flex min-h-screen">
           <LightBlur />
           <div className="m-4 flex  flex-col items-center justify-between w-full">
-            <header className="z-50 flex items-center justify-center p-4 w-full">
+            <header className="z-50 flex items-center justify-center p-4 mt-10 w-full">
               <Link href="/">
-                <h1 className="text-4xl font-extrabold bg-gradient-to-r from-red-500 via-red-700 to-red-900 inline-block text-transparent bg-clip-text text-center">
+                <h1 className="text-6xl font-extrabold bg-gradient-to-r from-red-500 via-red-700 to-red-900 inline-block text-transparent bg-clip-text text-center">
                   Youtube Video Converter
                 </h1>
               </Link>

@@ -1,14 +1,18 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Loading } from "@/components/ui/Loading";
+import * as ProgressPrimitive from "@radix-ui/react-progress";
 
+import { cn } from "@/lib/utils";
+import ytdl from "ytdl-core";
 type Video = {
   success: boolean;
   onlyAudio: any[];
@@ -32,11 +36,41 @@ export default function VideoDownload({
   params: { slug: string };
 }) {
   const [video, setVideo] = useState<Video>();
+  const [progress, setProgress] = useState(0);
+
+  const [loading, setLoading] = useState(false);
   async function GetData() {
     await axios.get(`/api/GetVideo?id=${params.slug}`).then((res) => {
       if (!res.data.success) return console.log(res.data.message);
       setVideo(res.data);
     });
+  }
+
+  async function DownloadAudio(dataurl: string) {
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/ConvertMp3", {
+        url: dataurl,
+      }); // WebM dosyasının URL'si
+
+      console.log(response.data);
+      // const blob = new Blob([await response.data], { type: "audio/mpeg" });
+
+      // // Dosyayı indirmek için bir link oluştur
+      // const url = window.URL.createObjectURL(blob);
+      // const a = document.createElement("a");
+      // a.href = url;
+      // a.download = `GRKNCONVERT - ${video?.info.title}.mp3`;
+      // document.body.appendChild(a);
+      // a.click();
+      // // İndirme işlemi tamamlandığında link'i temizle
+      // window.URL.revokeObjectURL(url);
+      // document.body.removeChild(a);
+    } catch (error) {
+      console.error("Dosya indirilirken bir hata oluştu: ", error);
+    } finally {
+    }
+    setLoading(false);
   }
   useEffect(() => {
     // Fetch video data
@@ -84,7 +118,7 @@ export default function VideoDownload({
             />
           </div>
         </div>
-        <div className="w-full flex-1 bg-zinc-900/50 rounded-lg p-4">
+        <div className="w-full flex-1 bg-zinc-900/50 rounded-lg p-4 flex flex-col justify-between">
           <Tabs defaultValue="video" className="w-full ">
             <TabsList className="w-full flex-1 bg-zinc-800 gap-x-2">
               <TabsTrigger
@@ -127,41 +161,56 @@ export default function VideoDownload({
             </TabsContent>
             <TabsContent value="audio">
               <div className="flex flex-col gap-y-2 w-full">
-                {video.onlyAudio.map((audio, index) => (
-                  <div
-                    key={index}
-                    className="flex w-full justify-between items-center bg-zinc-800 p-2 rounded-lg"
-                  >
-                    <p className="flex gap-x-2 justify-center items-center">
-                      {audio.container}
-                      <Badge>{audio.mimeType.split(";")[0]}</Badge>
-                    </p>
+                <div className="flex w-full justify-between items-center bg-zinc-800 p-3 rounded-lg">
+                  <p className="flex gap-x-2 justify-center items-center">
+                    Audio
+                    <Badge>MP3</Badge>
+                  </p>
 
-                    <Button
-                      type="submit"
-                      onClick={() => window.open(audio.url)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-4 h-4 sm:hidden"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                        />
-                      </svg>
-                      <p className="hidden sm:flex">Downlaod</p>
-                    </Button>
-                  </div>
-                ))}
+                  <Button
+                    disabled={loading}
+                    type="submit"
+                    onClick={() => DownloadAudio(params.slug)}
+                    // onClick={() => window.open(audio.url)}
+                  >
+                    {loading ? (
+                      <Loading />
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-4 h-4 sm:hidden"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                          />
+                        </svg>
+                        <p className="hidden sm:flex">Download</p>
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
+          {progress > 0 && (
+            <ProgressPrimitive.Root
+              className={cn(
+                "relative h-2 w-full overflow-hidden rounded-full bg-white/20"
+              )}
+            >
+              <ProgressPrimitive.Indicator
+                className="h-full w-full flex-1 bg-white transition-all"
+                style={{ transform: `translateX(-${100 - (progress || 0)}%)` }}
+              />
+            </ProgressPrimitive.Root>
+          )}
         </div>
       </div>
     </div>

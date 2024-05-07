@@ -14,6 +14,7 @@ export async function GET(request: Request, res: Response) {
 
   try {
     const videoInfo = await ytdl.getInfo(id);
+
     if (!videoInfo) {
       return Response.json({
         succsess: false,
@@ -36,6 +37,7 @@ export async function GET(request: Request, res: Response) {
     return Response.json({
       success: true,
       onlyAudio: onlyAudio,
+      
       video: video,
       info: {
         title: videoInfo.videoDetails.title,
